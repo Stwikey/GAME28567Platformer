@@ -1,11 +1,15 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
+using System.Collections.Generic;
 
 public class PlayerController : MonoBehaviour
 {
     public float speed = 5f;
 
     public Vector2 playerInput;
+    public Rigidbody2D rb2D;
+    public Collider2D col;
+    public List<Collider2D> colliders = new List<Collider2D>();
 
     public bool isLeft = true;
 
@@ -16,7 +20,9 @@ public class PlayerController : MonoBehaviour
 
     void Start()
     {
-        
+        rb2D = GetComponent<Rigidbody2D>();
+        col = GetComponent<Collider2D>();
+
     }
 
     void Update()
@@ -39,6 +45,8 @@ public class PlayerController : MonoBehaviour
             playerInput = Vector2.zero;
         }
         MovementUpdate(playerInput);
+
+
     }
 
     private void MovementUpdate(Vector2 playerInput)
@@ -49,7 +57,6 @@ public class PlayerController : MonoBehaviour
         **/
         
         //move the player horizontally
-        Rigidbody2D rb2D = GetComponent<Rigidbody2D>();
         rb2D.AddForce(speed * (Vector3)playerInput);
 
     }
@@ -65,7 +72,12 @@ public class PlayerController : MonoBehaviour
     }
     public bool IsGrounded()
     {
-        return false;
+        //player is in the air
+        if(col.GetContacts(colliders) == 0){
+            return false;
+        }else{//player is touching the ground
+            return true;
+        }
     }
 
     public FacingDirection GetFacingDirection()
